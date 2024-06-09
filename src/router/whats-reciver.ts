@@ -26,7 +26,20 @@ router.post('/t', (req, res) => {
 router.post('/webhook', (req, res) => {
   const dados = req.body
   console.log('axios entry')
-  axios.post(`${process.env.REDIRECT_URL}/t`, dados)
+  const url = `${process.env.REDIRECT_URL}/t`
+  console.log(url)
+  axios.post(url, dados).then(response => {
+    // Resposta recebida da outra rota
+    console.log(response.data);
+    // Você pode retornar uma resposta para o cliente, se desejar
+    // res.send('Dados enviados com sucesso para a outra rota!');
+  })
+  .catch(error => {
+    // Tratamento de erros, se houver
+    console.error('Erro ao enviar os dados para a outra rota:', error);
+    // Retorne um status de erro para o cliente, se necessário
+    // res.status(500).send('Erro ao enviar os dados para a outra rota!');
+  });
   console.log('axios out')
   res.status(200).send('Webhook recebida com sucesso!')
   });
