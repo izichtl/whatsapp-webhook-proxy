@@ -14,34 +14,62 @@ router.get('/', async (req: Request, res: Response) => {
     return res.send('whatsapp-webhook-proxy-to-void-pay-ngrok')
 })
 
-router.post('/t', (req, res) => {
-  console.log('ttttttttttttttt')
+
+
+
+
+router.post('/redirect', async (req, res) => {
   console.log(req.body)
-  if(true) {
-    whatsAppSenderMessage("5521982608223", a, "107368482457800")
-    res.status(200).send('Webhook recebida com sucesso!2')
+  try {
+    const wmaid = '107368482457800'
+    const url = `https://graph.facebook.com/v19.0/${wmaid}/messages`;
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.WA_TOKEN}`,
+      },
+      body: JSON.stringify({
+        messaging_product: 'whatsapp',
+        to: "5521982608223",
+        type: "text",
+        text: {
+            "body": 'resposta ao usuário',
+        }
+    }),
+    });
+    // console.log(response)
+    // Verifica se a resposta foi bem-sucedida
+    if (!response.ok) {
+      throw new Error('Erro ao enviar os dados');
+    }
+
+    // Converte a resposta para JSON
+    const responseData = await response.json();
+
+    // Envia os dados de volta para o cliente
+    res.json(responseData);
+  } catch (error) {
+    console.error('Erro na requisição:', error);
+    res.status(500).send('Erro na requisição')
   }
 });
+
+
 
 router.post('/webhook', (req, res) => {
   const dados = req.body
   console.log('axios entry')
-  const url = `${process.env.REDIRECT_URL}/t`
+  console.log(dados)
+  const url = `${process.env.REDIRECT_URL}/redirect`
   console.log(url)
   axios.post(url, dados).then(response => {
-    // Resposta recebida da outra rota
     console.log(response.data);
-    // Você pode retornar uma resposta para o cliente, se desejar
-    // res.send('Dados enviados com sucesso para a outra rota!');
+    res.status(200).send('Webhook recebida com sucesso!')
   })
   .catch(error => {
-    // Tratamento de erros, se houver
-    console.error('Erro ao enviar os dados para a outra rota:', error);
-    // Retorne um status de erro para o cliente, se necessário
-    // res.status(500).send('Erro ao enviar os dados para a outra rota!');
+    res.status(500).send('Erro ao enviar os dados para a outra rota!');
   });
-  console.log('axios out')
-  res.status(200).send('Webhook recebida com sucesso!')
   });
 
 

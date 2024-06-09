@@ -14,7 +14,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 // @ts-nocheck 
 const express_1 = __importDefault(require("express"));
-const whats_sender_1 = require("../helper/whats-sender");
 const axios_1 = __importDefault(require("axios"));
 const uuid_1 = require("uuid");
 const a = (0, uuid_1.v4)();
@@ -24,33 +23,54 @@ require("dotenv").config();
 router.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     return res.send('whatsapp-webhook-proxy-to-void-pay-ngrok');
 }));
-router.post('/t', (req, res) => {
-    console.log('ttttttttttttttt');
+router.post('/redirect', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(req.body);
-    if (true) {
-        (0, whats_sender_1.whatsAppSenderMessage)("5521982608223", a, "107368482457800");
-        res.status(200).send('Webhook recebida com sucesso!2');
+    try {
+        const wmaid = '107368482457800';
+        const url = `https://graph.facebook.com/v19.0/${wmaid}/messages`;
+        const response = yield fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${process.env.WA_TOKEN}`,
+            },
+            body: JSON.stringify({
+                messaging_product: 'whatsapp',
+                to: "5521982608223",
+                type: "text",
+                text: {
+                    "body": 'resposta ao usuário',
+                }
+            }),
+        });
+        // console.log(response)
+        // Verifica se a resposta foi bem-sucedida
+        if (!response.ok) {
+            throw new Error('Erro ao enviar os dados');
+        }
+        // Converte a resposta para JSON
+        const responseData = yield response.json();
+        // Envia os dados de volta para o cliente
+        res.json(responseData);
     }
-});
+    catch (error) {
+        console.error('Erro na requisição:', error);
+        res.status(500).send('Erro na requisição');
+    }
+}));
 router.post('/webhook', (req, res) => {
     const dados = req.body;
     console.log('axios entry');
-    const url = `${process.env.REDIRECT_URL}/t`;
+    console.log(dados);
+    const url = `${process.env.REDIRECT_URL}/redirect`;
     console.log(url);
     axios_1.default.post(url, dados).then(response => {
-        // Resposta recebida da outra rota
         console.log(response.data);
-        // Você pode retornar uma resposta para o cliente, se desejar
-        // res.send('Dados enviados com sucesso para a outra rota!');
+        res.status(200).send('Webhook recebida com sucesso!');
     })
         .catch(error => {
-        // Tratamento de erros, se houver
-        console.error('Erro ao enviar os dados para a outra rota:', error);
-        // Retorne um status de erro para o cliente, se necessário
-        // res.status(500).send('Erro ao enviar os dados para a outra rota!');
+        res.status(500).send('Erro ao enviar os dados para a outra rota!');
     });
-    console.log('axios out');
-    res.status(200).send('Webhook recebida com sucesso!');
 });
 exports.default = router;
 //# sourceMappingURL=whats-reciver.js.map
