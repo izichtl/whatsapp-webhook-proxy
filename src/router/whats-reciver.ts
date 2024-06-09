@@ -7,6 +7,8 @@ import { v4 as uuidv4 } from 'uuid';
 const a = uuidv4()
 const router: Router = express.Router();
 router.use(express.json());
+require("dotenv").config()
+
 
 router.get('/', async (req: Request, res: Response) => {
     res.send({ response: true})
@@ -25,7 +27,7 @@ router.post('/t', (req, res) => {
 router.post('/webhook', (req, res) => {
   const dados = req.body
   console.log('axios entry')
-  axios.post('https://79b8-2804-14d-1685-a1e3-7deb-aafe-859a-406d.ngrok-free.app/t', dados)
+  axios.post(`${process.env.REDIRECT_URL}/t`, dados)
   console.log('axios out')
   res.status(200).send('Webhook recebida com sucesso!')
   });
