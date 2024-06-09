@@ -11,7 +11,7 @@ require("dotenv").config()
 
 
 router.get('/', async (req: Request, res: Response) => {
-    res.send({ response: true})
+    return res.send('whatsapp-webhook-proxy-to-void-pay-ngrok')
 })
 
 router.post('/t', (req, res) => {
@@ -21,7 +21,6 @@ router.post('/t', (req, res) => {
     whatsAppSenderMessage("5521982608223", a, "107368482457800")
     res.status(200).send('Webhook recebida com sucesso!2')
   }
-  // res.status(200).send('Webhook recebida com sucesso!2')
 });
 
 router.post('/webhook', (req, res) => {
