@@ -38,17 +38,6 @@ router.post('/redirect', async (req, res) => {
         }
     }),
     });
-    // console.log(response)
-    // Verifica se a resposta foi bem-sucedida
-    if (!response.ok) {
-      throw new Error('Erro ao enviar os dados');
-    }
-
-    // Converte a resposta para JSON
-    const responseData = await response.json();
-
-    // Envia os dados de volta para o cliente
-    res.json(responseData);
     res.status(200).send('Sucesso na requisição')
   } catch (error) {
     console.error('Erro na requisição:', error);
@@ -58,7 +47,7 @@ router.post('/redirect', async (req, res) => {
 
 
 
-router.post('/webhook', (req, res) => {
+router.post('/webhook', async (req, res) => {
   const dados = req.body
   console.log('axios entry')
   console.log(dados)
@@ -81,22 +70,13 @@ router.post('/webhook', (req, res) => {
         }
     }),
     });
-    // console.log(response)
-    // Verifica se a resposta foi bem-sucedida
-    if (!response.ok) {
-      throw new Error('Erro ao enviar os dados');
-    }
 
-    // Converte a resposta para JSON
-    const responseData = await response.json();
-
-    // Envia os dados de volta para o cliente
-    res.json(responseData);
     res.status(200).send('Sucesso na requisição')
   } catch (error) {
     console.error('Erro na requisição:', error);
     res.status(500).send('Erro na requisição')
   }
+});
 
 
 export default router
