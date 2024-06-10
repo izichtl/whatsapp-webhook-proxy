@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // @ts-nocheck 
 const express_1 = __importDefault(require("express"));
 const uuid_1 = require("uuid");
+const sender_helper_1 = require("../helper/sender-helper");
 const a = (0, uuid_1.v4)();
 const router = express_1.default.Router();
 router.use(express_1.default.json());
@@ -22,8 +23,21 @@ require("dotenv").config();
 router.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     return res.send('whatsapp-webhook-proxy-to-void-pay-ngrok');
 }));
-router.post('/redirect', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-}));
+router.post('/', function (req, res, next) {
+    var data = (0, sender_helper_1.getTextMessageInput)('5521982608223', 'Welcome to the Movie Ticket Demo App for Node.js!');
+    console.log(data, '');
+    (0, sender_helper_1.sendMessage)(data)
+        .then((response) => {
+        res.redirect(200, '/');
+        return;
+    })
+        .catch(function (error) {
+        console.log(error);
+        console.log(error.response.data);
+        res.sendStatus(500);
+        return;
+    });
+});
 router.post('/webhook', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const dados = req.body;
     console.log('axios entry');

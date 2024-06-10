@@ -1,9 +1,8 @@
 
 // @ts-nocheck 
 import express, { Request, Response, Router } from 'express';
-import { whatsAppSenderMessage } from '../helper/whats-sender';
-import axios from 'axios'
 import { v4 as uuidv4 } from 'uuid';
+import { sendMessage, getTextMessageInput } from '../helper/sender-helper';
 const a = uuidv4()
 const router: Router = express.Router();
 router.use(express.json());
@@ -18,8 +17,20 @@ router.get('/', async (req: Request, res: Response) => {
 
 
 
-router.post('/redirect', async (req, res) => {
-  
+router.post('/', function(req, res, next) {
+  var data = getTextMessageInput('5521982608223', 'Welcome to the Movie Ticket Demo App for Node.js!');
+  console.log(data, '')
+  sendMessage(data)
+    .then((response) => {
+      res.redirect(200, '/')
+      return
+    })
+    .catch(function (error) {
+      console.log(error)
+      console.log(error.response.data)
+      res.sendStatus(500)
+      return;
+    });
 });
 
 
