@@ -16,6 +16,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const uuid_1 = require("uuid");
 const sender_helper_1 = require("../helper/sender-helper");
+const redirect_helper_1 = require("../helper/redirect-helper");
 const a = (0, uuid_1.v4)();
 const router = express_1.default.Router();
 router.use(express_1.default.json());
@@ -40,9 +41,28 @@ router.post('/', function (req, res, next) {
 });
 router.post('/webhook', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const dados = req.body;
-    console.log('axios entry');
+    console.log('webhook - entry');
     console.log(dados);
-    console.log(req.body);
+    (0, redirect_helper_1.redirectMessage)(req.body)
+        .then((response) => {
+        // res.redirect(200, '/')
+        console.log('webhook - out');
+        res.sendStatus(200);
+        return;
+    })
+        .catch(function (error) {
+        console.log(error);
+        console.log(error.response.data);
+        res.sendStatus(500);
+        return;
+    });
+}));
+router.post('/redirect', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const dados = req.body;
+    console.log('redirect - entry');
+    console.log(dados);
+    console.log('redirect - out');
+    res.sendStatus(200);
 }));
 exports.default = router;
 //# sourceMappingURL=whats-reciver.js.map
