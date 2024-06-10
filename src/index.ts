@@ -2,7 +2,6 @@
 // @ts-nocheck
 import express from 'express'
 import bodyParser from 'body-parser'
-import testRouter from './router/base-router'
 import whatsReciver from './router/whats-reciver'
 
 const app = express()
@@ -27,12 +26,7 @@ app.get("/webhook",(req,res)=>{
         res.status(403)
     }
   }
-});
-
-
-// to test only
-app.use('/test', testRouter)
-
+})
 
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {

@@ -6,7 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // @ts-nocheck
 const express_1 = __importDefault(require("express"));
 const body_parser_1 = __importDefault(require("body-parser"));
-const base_router_1 = __importDefault(require("./router/base-router"));
 const whats_reciver_1 = __importDefault(require("./router/whats-reciver"));
 const app = (0, express_1.default)();
 require("dotenv").config();
@@ -27,8 +26,6 @@ app.get("/webhook", (req, res) => {
         }
     }
 });
-// to test only
-app.use('/test', base_router_1.default);
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);
