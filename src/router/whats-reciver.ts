@@ -19,30 +19,7 @@ router.get('/', async (req: Request, res: Response) => {
 
 
 router.post('/redirect', async (req, res) => {
-  console.log(req.body)
-  try {
-    const wmaid = '107368482457800'
-    const url = `https://graph.facebook.com/v19.0/${wmaid}/messages`;
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.WA_TOKEN}`,
-      },
-      body: JSON.stringify({
-        messaging_product: 'whatsapp',
-        to: "5521982608223",
-        type: "text",
-        text: {
-            "body": 'resposta ao usuário',
-        }
-    }),
-    });
-    res.status(200).send('Sucesso na requisição')
-  } catch (error) {
-    console.error('Erro na requisição:', error);
-    res.status(500).send('Erro na requisição')
-  }
+  
 });
 
 
@@ -52,30 +29,7 @@ router.post('/webhook', async (req, res) => {
   console.log('axios entry')
   console.log(dados)
   console.log(req.body)
-  try {
-    const wmaid = '107368482457800'
-    const url = `https://graph.facebook.com/v19.0/${wmaid}/messages`;
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.WA_TOKEN}`,
-      },
-      body: JSON.stringify({
-        messaging_product: 'whatsapp',
-        to: "5521982608223",
-        type: "text",
-        text: {
-            "body": 'resposta ao usuário',
-        }
-    }),
-    });
 
-    res.status(200).send('Sucesso na requisição')
-  } catch (error) {
-    console.error('Erro na requisição:', error);
-    res.status(500).send('Erro na requisição')
-  }
 });
 
 
