@@ -14,17 +14,19 @@ app.use(body_parser_1.default.json());
 // router
 app.use('/', whats_reciver_1.default);
 app.get("/webhook", (req, res) => {
-    let mode = req.query["hub.mode"];
+    // let mode=req.query["hub.mode"];
     let challange = req.query["hub.challenge"];
-    let token = req.query["hub.verify_token"];
-    if (mode && token) {
-        if (mode === "subscribe" && token === 'ivan') {
-            res.status(200).send(challange);
-        }
-        else {
-            res.status(403);
-        }
-    }
+    res.status(200).send(challange);
+    // let token=req.query["hub.verify_token"];
+    // console.log(process.env.API_ME)
+    // console.log(token)
+    // if(mode && token){
+    //   if(mode === "subscribe" && token === process.env.API_ME){
+    //     res.status(200).send(challange);
+    //   }else{
+    //       res.status(403)
+    //   }
+    // }
 });
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
