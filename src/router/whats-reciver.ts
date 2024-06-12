@@ -1,67 +1,47 @@
 
 // @ts-nocheck 
-import express, { Request, Response, Router } from 'express';
-import { v4 as uuidv4 } from 'uuid';
-import { sendMessage, getTextMessageInput } from '../helper/sender-helper';
-import { redirectMessage } from '../helper/redirect-helper';
-const a = uuidv4()
+import express, { Request, Response, Router } from 'express'
+import axios from 'axios'
+import { messageFlow } from '../helper/message-flow'
+
+
 const router: Router = express.Router();
 router.use(express.json());
 require("dotenv").config()
 
 
 router.get('/', async (req: Request, res: Response) => {
+    // return res.send(createModel('9191919191', growProgramTags[basic], 'startModel'))
     return res.send('whatsapp-webhook-proxy-to-void-pay-ngrok')
 })
 
-
-
-
-
-router.post('/', function(req, res, next) {
-  var data = getTextMessageInput('5521982608223', 'Welcome to the Movie Ticket Demo App for Node.js!');
-  console.log(data, '')
-  sendMessage(data)
-    .then((response) => {
-      res.redirect(200, '/')
-      return
-    })
-    .catch(function (error) {
-      console.log(error)
-      console.log(error.response.data)
-      res.sendStatus(500)
-      return;
-    });
-});
-
-
-
 router.post('/webhook', async (req, res) => {
   const dados = req.body
-  console.log('webhook - entry')
-  console.log(dados)
-  redirectMessage(req.body)
-    .then((response) => {
-      // res.redirect(200, '/')
-      console.log('webhook - out')
-      res.sendStatus(200)
-      return
-    })
-    .catch(function (error) {
-      console.log(error)
-      console.log(error.response.data)
-      res.sendStatus(500)
-      return;
-    });
-});
 
-router.post('/redirect', async (req, res) => {
-  const dados = req.body
-  console.log('redirect - entry')
-  console.log(dados)
-  console.log('redirect - out')
-  res.sendStatus(200)
-});
+  // console.log(JSON.stringify(dados, null, 2))
+  // verifica se tem messagem
+  const message = req.body.entry?.[0]?.changes[0]?.value?.messages?.[0]
+  const business_phone_number_id = req.body.entry?.[0].changes?.[0].value?.metadata?.phone_number_id
+  if (message !== undefined) {
+    await messageFlow(dados, res)
+    } else {
+    if (message) {
+      await axios({
+        method: "POST",
+        url: `https://graph.facebook.com/v18.0/${business_phone_number_id}/messages`,
+        headers: {
+          Authorization: `Bearer ${process.env.WA_TOKEN}`,
+        },
+        data: {
+          messaging_product: "whatsapp",
+          status: "read",
+          message_id: message.id,
+        },
+      });
+  }
+    res.sendStatus(200)
+  }
 
+})
 
 export default router
